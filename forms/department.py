@@ -11,8 +11,6 @@ class DepartmentForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Добавить')
 
-def a():
-    pass
 
 class EdDepartmentForm(DepartmentForm):
     submit = SubmitField('Сохранить')
