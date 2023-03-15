@@ -1,7 +1,10 @@
+import os
+
 from flask import Flask, url_for, request, render_template, redirect, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from waitress import serve
 
-from data import db_session, jobs_api
+from data import db_session
 from data.departments import Department
 from data.jobs import Jobs
 from data.users import User
@@ -15,6 +18,11 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# app.run(port=8080, host='127.0.0.1')
+
+port = int(os.environ.get('PORT', 8080))
+serve(app, port=port, host="127.0.0.1")
 
 
 @login_manager.user_loader
@@ -104,11 +112,11 @@ def addjob():
             is_finished=form.is_finished.data
         )
         if form.collaborators.data:
-            job.collaborators=form.collaborators.data
+            job.collaborators = form.collaborators.data
         if form.start_date.data:
-            job.start_date=form.start_date.data
+            job.start_date = form.start_date.data
         if form.end_date.data:
-            job.end_date=form.end_date.data
+            job.end_date = form.end_date.data
         db_sess.add(job)
         db_sess.commit()
         return redirect('/')
@@ -151,7 +159,7 @@ def edit_job(id):
             return redirect('/')
         else:
             abort(404)
-    return render_template('job.html',title='Редактирование работы',form=form)
+    return render_template('job.html', title='Редактирование работы', form=form)
 
 
 @app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
@@ -217,7 +225,7 @@ def edit_department(id):
             return redirect('/departments')
         else:
             abort(404)
-    return render_template('department.html',title='Редактирование департамента',form=form)
+    return render_template('department.html', title='Редактирование департамента', form=form)
 
 
 @app.route('/departments_delete/<int:id>', methods=['GET', 'POST'])
@@ -264,13 +272,14 @@ def answer():
     }
     return render_template('auto_answer.html', **param)
 
+    # @app.route('/login', methods=['POST', 'GET'])
+    # def login():
+    #     form = LoginForm()
+    #     if form.validate_on_submit():
+    #         return redirect('/')
+    #     return render_template('login.html', title='Авторизация', form=form)
 
-# @app.route('/login', methods=['POST', 'GET'])
-# def login():
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         return redirect('/')
-#     return render_template('login.html', title='Авторизация', form=form)
+    # app.run(port=8080, host='127.0.0.1')
 
 
 @app.route('/promotion')
