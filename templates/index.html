@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h3 align="center">Work logs</h3>
+    <br>
+    <a href="/departments" class="btn btn-secondary">Перейти к департаментам</a>
+    <br>
+
+    {% for item in jobs %}
+
+        <h3>Action #{{ loop.index }}</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr class="table-secondary">
+                  <th scope="col">Title of activity</th>
+                  <th scope="col">Team leader</th>
+                  <th scope="col">Duration</th>
+                  <th scope="col">List of collaborators</th>
+                  <th scope="col">Is finished</th>
+                </tr>
+              </thead>
+            <tbody>
+
+              <tr class="table-info">
+                <td>{{ item.job }}</td>
+                <td>{{ item.user.name }} {{ item.user.surname }}</td>
+                <td>{{ item.work_size }} hours</td>
+                <td>{{ item.collaborators }}</td>
+                {% if item.is_finished %}
+                  <td>Job if finished</td>
+                {% else %}
+                  <td class="table-danger">Job is not finished</td>
+                {% endif %}
+              </tr>
+            </tbody>
+        </table>
+
+        {% if current_user.is_authenticated and (current_user == item.user or current_user.id == 1) %}
+                <div>
+                    <a href="/jobs/{{ item.id }}" class="btn btn-warning">
+                        Изменить
+                    </a>
+                    <a href="/jobs_delete/{{ item.id }}" class="btn btn-danger">
+                        Удалить
+                    </a>
+                </div>
+        {% endif %}
+
+    {% endfor %}
+
+    <br>
+    {% if current_user.is_authenticated %}
+        <a class="btn btn-primary" href="/addjob">Добавить работу</a>
+    {% endif %}
+
+{% endblock %}
